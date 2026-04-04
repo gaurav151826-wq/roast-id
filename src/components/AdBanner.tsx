@@ -16,7 +16,8 @@ export default function AdBanner() {
     <div
       ref={adRef}
       id="ad-container"
-      className="flex justify-center mt-5"
+      className="flex justify-center items-center mt-5 min-h-[120px]"
+      style={{ minHeight: '120px' }}
     />
   );
 }
