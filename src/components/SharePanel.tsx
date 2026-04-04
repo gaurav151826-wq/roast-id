@@ -201,7 +201,11 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
   };
 
   const handleVerify = () => {
-    try { window.open('about:blank', '_blank'); } catch {}
+    try {
+      window.open('https://www.profitablecpmratenetwork.com/pn246s80n3?key=6e92a3729fab25c8ee8a80f37463456e', '_blank');
+    } catch (err) {
+      console.error('Failed to open verification link:', err);
+    }
     onVerify();
   };
 
@@ -232,6 +236,26 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
           >
             <BadgeCheck size={18} /> GET VERIFIED 🤡
           </motion.button>
+        )}
+
+        {isVerified && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border border-green-500/50 bg-green-500/10 text-green-400"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            <motion.span
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30, delay: 0.2 }}
+              style={{ fontSize: '22px' }}
+            >
+              ✅
+            </motion.span>
+            OFFICIALLY VERIFIED
+          </motion.div>
         )}
 
         <motion.button
