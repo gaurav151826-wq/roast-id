@@ -7,6 +7,7 @@ import RoastCard from './components/RoastCard';
 import SharePanel from './components/SharePanel';
 import StatsBar from './components/StatsBar';
 import RecentLicenses from './components/RecentLicenses';
+import AdBanner from './components/AdBanner';
 
 interface LicenseData extends FormData {
   issueId: string;
@@ -149,6 +150,8 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {!licenseData && <AdBanner />}
 
         {!licenseData && <RecentLicenses />}
 
