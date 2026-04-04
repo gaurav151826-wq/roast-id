@@ -27,11 +27,23 @@ export default function RecentLicenses() {
   useEffect(() => {
     fetch('/api/licenses')
       .then(r => r.json())
-      .then(data => { setLicenses(data); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(data => { 
+        // ✅ SAFETY CHECK: Only set if data is an array
+        if (Array.isArray(data)) {
+          setLicenses(data); 
+        } else {
+          setLicenses([]); // Set empty list if API fails
+        }
+        setLoading(false); 
+      })
+      .catch(() => {
+        setLicenses([]);
+        setLoading(false);
+      });
   }, []);
 
-  if (loading || licenses.length === 0) return null;
+  // ✅ PREVENT CRASH: If licenses isn't an array yet, don't render the list
+  if (loading || !Array.isArray(licenses) || licenses.length === 0) return null;
 
   return (
     <motion.div
