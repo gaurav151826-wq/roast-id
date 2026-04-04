@@ -13,30 +13,35 @@ export default async (req) => {
   try {
     const db = supabase();
 
+    // 1. GET: Fetching the recent roasts
     if (req.method === 'GET') {
       const { data, error } = await db
-        .from('cards')
+        .from('roast_licenses') // ✅ FIXED: Changed from 'cards'
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20);
+      
       if (error) throw error;
-      return Response.json(data);
+      return Response.json(data || []); // Returns empty array if no data
     }
 
+    // 2. POST: Creating a new roast
     if (req.method === 'POST') {
-      const { name, status, achievements, luck_level, brain_rot_level, issue_id } = await req.json();
+      const { name, status, achievements, luck_level, issue_id } = await req.json();
+      
       const { data, error } = await db
-        .from('cards')
+        .from('roast_licenses') // ✅ FIXED: Changed from 'cards'
         .insert({
           name,
           status,
           achievements,
           luck_level,
-          brain_rot_level: brain_rot_level || 50,
           issue_id,
+          // Note: brain_rot_level is skipped here because it's in a different table
         })
         .select()
         .single();
+        
       if (error) throw error;
       return Response.json(data, { status: 201 });
     }
