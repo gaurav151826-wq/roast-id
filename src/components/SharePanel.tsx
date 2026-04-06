@@ -49,7 +49,8 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  const fileName = `roast-license-${name.toLowerCase().replace(/\s+/g, '-')}.png`;
+  const normalizedIssueId = issueId.trim().slice(0, 8).toLowerCase();
+  const fileName = `roast-license-${name.toLowerCase().replace(/\s+/g, '-')}-${normalizedIssueId}.png`;
 
   const showToast = (msg: string) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -177,7 +178,7 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
           await navigator.share({
             files: [file],
             title: 'My Roast License',
-              text: `I'm officially cooked! See my card.`,
+            text: `I'm officially cooked! See my card on ${siteUrl}.`,
           });
           setShareDone(true);
           setTimeout(() => setShareDone(false), 4000);
@@ -200,7 +201,7 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
   };
 
   const handleVerify = () => {
-    const smartlink = (import.meta as any).env?.VITE_SMARTLINK_URL || 'https://pl29061344.profitablecpmratenetwork.com/';
+    const smartlink = import.meta.env.VITE_SMARTLINK_URL || 'https://pl29061344.profitablecpmratenetwork.com/';
     try {
       window.open(smartlink, '_blank', 'noopener,noreferrer');
     } catch (err) {
