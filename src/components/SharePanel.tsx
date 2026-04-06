@@ -201,14 +201,17 @@ export default function SharePanel({ cardRef, name, issueId, isVerified, onVerif
   };
 
   const handleVerify = () => {
-    const smartlink = import.meta.env.VITE_SMARTLINK_URL || 'https://pl29061344.profitablecpmratenetwork.com/';
+    const smartlink = import.meta.env.VITE_SMARTLINK_URL || 'https://www.profitablecpmratenetwork.com/pn246s80n3?key=6e92a3729fab25c8ee8a80f37463456e';
+    // Mark as verified first, then open the ad in a separate tab.
+    try { onVerify(); } catch (err) { console.error('onVerify failed', err); }
+
     try {
-      window.open(smartlink, '_blank', 'noopener,noreferrer');
+      const popup = window.open(smartlink, '_blank', 'noopener,noreferrer');
+      if (!popup) showToast('Please allow pop-ups to open the verification tab.');
     } catch (err) {
       console.warn('Failed to open smartlink', err);
+      showToast('Could not open verification tab. Please try again.');
     }
-    // mark verified immediately in background
-    try { onVerify(); } catch (err) { console.error('onVerify failed', err); }
   };
 
   return (
