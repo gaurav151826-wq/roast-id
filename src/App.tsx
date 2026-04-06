@@ -65,8 +65,8 @@ export default function App() {
     return (
     <div className="min-h-screen cyber-bg grid-overlay scanline-effect">
       <AdsterraGlobalBar />
-      <div className="w-full h-[50px] glass flex items-center justify-center border-b border-white/5">
-        <span className="text-[10px] text-white/15 tracking-[4px] uppercase" style={{ fontFamily: 'var(--font-mono)' }}>— AD SPACE —</span>
+      <div className="w-full h-[50px] glass flex items-center justify-center border-b border-white/5 px-3">
+        <span className="text-[9px] sm:text-[10px] text-white/15 tracking-[2px] sm:tracking-[4px] uppercase text-center" style={{ fontFamily: 'var(--font-mono)' }}>- AD SPACE -</span>
       </div>
 
       <div className="relative z-10 px-4 py-10 max-w-3xl mx-auto">
@@ -80,9 +80,9 @@ export default function App() {
           >
             <Shield size={28} className="text-cyber-purple" />
           </motion.div>
-          <h1 className="text-4xl md:text-6xl font-black leading-none mb-2" style={{ fontFamily: 'var(--font-display)', background: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 50%, #EC4899 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '2px' }}>ROAST</h1>
-          <h1 className="text-4xl md:text-6xl font-black leading-none" style={{ fontFamily: 'var(--font-display)', background: 'linear-gradient(135deg, #06B6D4 0%, #EC4899 50%, #8B5CF6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '2px' }}>LICENSE</h1>
-          <motion.p className="text-sm mt-4 tracking-wider" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.3)' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>GET OFFICIALLY CERTIFIED. NO APPEALS.</motion.p>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black leading-none mb-2" style={{ fontFamily: 'var(--font-display)', background: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 50%, #EC4899 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '2px' }}>ROAST</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black leading-none" style={{ fontFamily: 'var(--font-display)', background: 'linear-gradient(135deg, #06B6D4 0%, #EC4899 50%, #8B5CF6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '2px' }}>LICENSE</h1>
+          <motion.p className="text-xs sm:text-sm mt-4 tracking-[1px] sm:tracking-wider px-2" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.3)' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>GET OFFICIALLY CERTIFIED. NO APPEALS.</motion.p>
         </motion.div>
 
         {/* Form */}
@@ -116,7 +116,7 @@ export default function App() {
         </AnimatePresence>
 
         <motion.footer className="text-center mt-20 pb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-          <div className="text-[10px] tracking-[3px] uppercase" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.12)' }}>ROAST LICENSE AUTHORITY © 2026 • ALL ROASTS FINAL</div>
+          <div className="text-[9px] sm:text-[10px] tracking-[1.5px] sm:tracking-[3px] uppercase px-2" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.12)' }}>ROAST LICENSE AUTHORITY © 2026 • ALL ROASTS FINAL</div>
         </motion.footer>
       </div>
     </div>

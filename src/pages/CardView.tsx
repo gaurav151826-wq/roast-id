@@ -22,11 +22,11 @@ interface CardData {
 export default function CardView() {
   const { issueId } = useParams<{ issueId: string }>();
   const [card, setCard] = useState<CardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(() => Boolean(issueId));
+  const [error, setError] = useState(() => !issueId);
 
   useEffect(() => {
-    if (!issueId) { setError(true); setLoading(false); return; }
+    if (!issueId) return;
     fetch(`/api/card?id=${encodeURIComponent(issueId)}`)
       .then(r => {
         if (!r.ok) throw new Error('Not found');
@@ -115,8 +115,8 @@ export default function CardView() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="glass rounded-xl px-5 py-3 mb-6 flex items-center gap-3"
-            >
+            className="glass rounded-xl px-4 sm:px-5 py-3 mb-6 flex items-center gap-3 w-full"
+          >
               <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.3), rgba(6,182,212,0.3))' }}>
                 <span className="text-sm">🪪</span>
               </div>
@@ -124,7 +124,7 @@ export default function CardView() {
                 <div className="text-xs text-white/40" style={{ fontFamily: 'var(--font-mono)', letterSpacing: '1px' }}>LICENSED TO</div>
                 <div className="text-sm font-bold text-white">{card.name.toUpperCase()}</div>
               </div>
-              <div className="ml-auto text-[10px] text-white/20" style={{ fontFamily: 'var(--font-mono)' }}>#{card.issue_id}</div>
+              <div className="ml-auto text-[9px] sm:text-[10px] text-white/20 text-right break-all" style={{ fontFamily: 'var(--font-mono)' }}>#{card.issue_id}</div>
             </motion.div>
 
             {/* The card */}
@@ -215,7 +215,7 @@ export default function CardView() {
         </motion.div>
 
         <motion.footer className="text-center mt-16 pb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-          <div className="text-[10px] tracking-[3px] uppercase" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.12)' }}>ROAST LICENSE AUTHORITY © 2026 • ALL ROASTS FINAL</div>
+          <div className="text-[9px] sm:text-[10px] tracking-[1.5px] sm:tracking-[3px] uppercase px-2" style={{ fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.12)' }}>ROAST LICENSE AUTHORITY © 2026 • ALL ROASTS FINAL</div>
         </motion.footer>
       </div>
     </div>
