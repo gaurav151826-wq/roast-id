@@ -103,7 +103,7 @@ export default function App() {
             <motion.div id="card-area" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
               <AnimatePresence>
                 {showCard && (
-                  <motion.div initial={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }} animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, mass: 1 }} style={{ perspective: '1000px' }} className="overflow-x-auto max-w-full pb-2">
+                    <motion.div initial={{ opacity: 0, scale: 0.8, rotateX: 20, y: 40 }} animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, mass: 1 }} style={{ perspective: '1000px' }} className="w-full flex justify-center pb-2">
                     <RoastCard ref={cardRef} name={licenseData.name} status={licenseData.status} achievements={licenseData.achievements} luckLevel={licenseData.luckLevel} brainRotLevel={licenseData.brainRotLevel} photo={licenseData.photo} issueId={licenseData.issueId} isVerified={isVerified} />
                   </motion.div>
                 )}

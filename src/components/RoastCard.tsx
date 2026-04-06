@@ -85,7 +85,7 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
         className="holo-shimmer roast-card relative"
         style={{
           '--shimmer-x': `${shimmerPos.x}%`,
-          width: 'min(540px, 100%)',
+          width: 'min(540px, calc(100vw - 32px))',
           borderRadius: '24px',
           overflow: 'hidden',
           backgroundColor: '#0B0620',
@@ -93,6 +93,8 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
           boxShadow: '0 0 40px rgba(139,92,246,0.15), 0 20px 60px rgba(0,0,0,0.5)',
           fontFamily: "'Exo 2', sans-serif",
           position: 'relative',
+          boxSizing: 'border-box',
+          maxWidth: '540px',
         } as React.CSSProperties}
       >
         {/* Border edges */}
