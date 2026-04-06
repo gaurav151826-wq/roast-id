@@ -1,7 +1,7 @@
 import { forwardRef, useState, useCallback, useMemo } from 'react';
-import { Shield, Star, Award } from 'lucide-react';
+import { Shield, Star } from 'lucide-react';
 import { generateRoast } from '../lib/roastEngine';
-import type { AuraBreakdown, BrainRotTier } from '../lib/roastEngine';
+import type { BrainRotTier } from '../lib/roastEngine';
 
 interface RoastCardProps {
   name: string;
@@ -23,131 +23,44 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const STATUS_CLASS: Record<string, string> = {
-  'Legibly Cooked': 'S',
-  '100% Simp': 'A',
-  'Professional Yapper': 'B',
-  'Broke Legend': 'C',
-  '3 AM Overthinker': 'X',
-};
-
-const STATUS_VIBE: Record<string, string> = {
-  'Legibly Cooked': 'Permanently on fire. No extinguisher found.',
-  '100% Simp': 'Down bad. Down catastrophic. Down astronomical.',
-  'Professional Yapper': 'Talks more than they think. Which is saying a lot.',
-  'Broke Legend': 'Rich in spirit. Bankrupt in everything else.',
-  '3 AM Overthinker': 'Brain never clocks out. Sleep is a myth.',
+  'Legibly Cooked': 'S', '100% Simp': 'A', 'Professional Yapper': 'B', 'Broke Legend': 'C', '3 AM Overthinker': 'X',
 };
 
 function getSpawnDate(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
-  hash = Math.abs(hash);
-  const month = (hash % 12) + 1;
-  const day = (hash % 28) + 1;
-  const year = 1995 + (hash % 10);
-  return `${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h << 5) - h) + name.charCodeAt(i);
+  h = Math.abs(h);
+  return `${String((h % 12) + 1).padStart(2, '0')}/${String((h % 28) + 1).padStart(2, '0')}/${1995 + (h % 10)}`;
 }
 
-function getCurrentAddy(name: string): string {
-  const addys = ["Mom's Basement, WiFi Lane", 'Bed, Blanket District', 'Couch, Living Room Blvd', 'DMs, Internet City', 'Cloud 9, Delusional Ave', 'Nowhere, Lost County'];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
-  return addys[Math.abs(hash) % addys.length];
-}
-
-function BrainRotMeter({ level, tier }: { level: number; tier: BrainRotTier }) {
-  const barColor = level <= 30
-    ? '#10B981'
-    : level <= 70
-      ? '#F59E0B'
-      : level <= 99
-        ? '#EF4444'
-        : '#DC2626';
-
+function BrainRotBar({ level, tier }: { level: number; tier: BrainRotTier }) {
+  const barColor = level <= 30 ? '#10B981' : level <= 70 ? '#F59E0B' : '#EF4444';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-          <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.3)', letterSpacing: '1.5px', fontFamily: "'JetBrains Mono', monospace" }}>BRAIN_ROT_LEVEL</div>
-          <div style={{ fontSize: '8px', fontWeight: 700, color: tier.color, fontFamily: "'JetBrains Mono', monospace" }}>{tier.emoji} {tier.label.toUpperCase()}</div>
-        </div>
-        <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden', position: 'relative' }}>
-          {/* Solid color bar — no CSS gradients that break in export */}
-          <div
-            style={{
-              width: `${level}%`,
-              height: '100%',
-              borderRadius: '4px',
-              backgroundColor: barColor,
-            }}
-          />
-          <div style={{ position: 'absolute', left: '30%', top: 0, width: '1px', height: '100%', background: 'rgba(255,255,255,0.1)' }} />
-          <div style={{ position: 'absolute', left: '70%', top: 0, width: '1px', height: '100%', background: 'rgba(255,255,255,0.1)' }} />
-        </div>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>BRAIN ROT</span>
+        <span style={{ fontSize: '12px', fontWeight: 700, color: tier.color, fontFamily: "'JetBrains Mono', monospace" }}>{tier.emoji} {tier.label.toUpperCase()} {level}%</span>
       </div>
-      <div style={{ fontSize: '14px', fontWeight: 800, fontFamily: "'Orbitron', sans-serif", color: tier.color, minWidth: '36px', textAlign: 'right' }}>{level}%</div>
-    </div>
-  );
-}
-
-function AuraTracker({ aura }: { aura: AuraBreakdown }) {
-  const isNegative = aura.total < 0;
-  const borderColor = isNegative ? 'rgba(239,68,68,0.25)' : 'rgba(16,185,129,0.25)';
-  const numberColor = isNegative ? '#EF4444' : '#10B981';
-
-  return (
-    <div
-      style={{
-        backgroundColor: 'rgba(0,0,0,0.35)',
-        border: `1px solid ${borderColor}`,
-        borderRadius: '10px',
-        padding: '8px 12px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-          <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.4)', letterSpacing: '2.5px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700 }}>
-            ✨ TOTAL AURA
-          </div>
-          <div
-            style={{
-              fontSize: '18px',
-              fontWeight: 900,
-              fontFamily: "'Orbitron', sans-serif",
-              color: numberColor,
-              letterSpacing: '1px',
-            }}
-          >
-            {aura.total > 0 ? '+' : ''}{aura.total.toLocaleString()}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 8px', fontSize: '7px', fontFamily: "'JetBrains Mono', monospace" }}>
-          <span style={{ color: 'rgba(255,255,255,0.25)' }}>START: <span style={{ color: '#10B981' }}>+{aura.starting.toLocaleString()}</span></span>
-          <span style={{ color: 'rgba(255,255,255,0.25)' }}>STATUS: <span style={{ color: '#EF4444' }}>{aura.statusCost.toLocaleString()}</span></span>
-          {aura.achievementCosts.map((a, i) => (
-            <span key={i} style={{ color: 'rgba(255,255,255,0.2)' }}>
-              {a.name.length > 18 ? a.name.slice(0, 16) + '..' : a.name}: <span style={{ color: '#EF4444' }}>{a.cost.toLocaleString()}</span>
-            </span>
-          ))}
-          <span style={{ color: 'rgba(255,255,255,0.25)' }}>ROT: <span style={{ color: '#EF4444' }}>{aura.brainRotCost.toLocaleString()}</span></span>
-          <span style={{ color: 'rgba(255,255,255,0.25)' }}>LUCK: <span style={{ color: aura.luckBonus >= 0 ? '#10B981' : '#EF4444' }}>{aura.luckBonus > 0 ? '+' : ''}{aura.luckBonus.toLocaleString()}</span></span>
-        </div>
+      <div style={{ height: '10px', borderRadius: '5px', backgroundColor: 'rgba(255,255,255,0.06)', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ width: `${level}%`, height: '100%', borderRadius: '5px', backgroundColor: barColor }} />
+        <div style={{ position: 'absolute', left: '30%', top: 0, width: '1px', height: '100%', background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ position: 'absolute', left: '70%', top: 0, width: '1px', height: '100%', background: 'rgba(255,255,255,0.08)' }} />
       </div>
     </div>
   );
 }
+
+const LBL: React.CSSProperties = { fontSize: '10px', color: 'rgba(255,255,255,0.35)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, marginBottom: '3px' };
+const SLBL: React.CSSProperties = { fontSize: '9px', color: 'rgba(255,255,255,0.3)', letterSpacing: '1.5px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, marginBottom: '2px' };
+const SVAL: React.CSSProperties = { fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', fontFamily: "'JetBrains Mono', monospace" };
+const DIV: React.CSSProperties = { borderTop: '1px solid rgba(255,255,255,0.06)', margin: '14px 0' };
 
 const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
   ({ name, status, achievements, luckLevel, brainRotLevel, photo, issueId, isVerified }, ref) => {
     const [shimmerPos, setShimmerPos] = useState({ x: -100, y: 0 });
-    const statusColor = STATUS_COLORS[status] || '#8B5CF6';
+    const sc = STATUS_COLORS[status] || '#8B5CF6';
     const classType = STATUS_CLASS[status] || '?';
-    const vibeCord = STATUS_VIBE[status] || 'Vibes: Unknown. Proceed with caution.';
     const spawnDate = getSpawnDate(name);
-    const addy = getCurrentAddy(name);
 
     const roast = useMemo(
       () => generateRoast(name, status, achievements, luckLevel, brainRotLevel, issueId),
@@ -156,183 +69,164 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
 
     const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 200 - 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 200 - 100;
-      setShimmerPos({ x, y });
+      setShimmerPos({ x: ((e.clientX - rect.left) / rect.width) * 200 - 100, y: ((e.clientY - rect.top) / rect.height) * 200 - 100 });
     }, []);
 
-    const handleMouseLeave = useCallback(() => {
-      setShimmerPos({ x: -100, y: 0 });
-    }, []);
-
-    const today = new Date();
-    const issueDate = today.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    const issueDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    const auraStr = (roast.aura.total > 0 ? '+' : '') + roast.aura.total.toLocaleString();
+    const isNeg = roast.aura.total < 0;
 
     return (
       <div
         ref={ref}
         id="roast-card"
         onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={() => setShimmerPos({ x: -100, y: 0 })}
         className="holo-shimmer relative"
         style={{
           '--shimmer-x': `${shimmerPos.x}%`,
-          width: '500px',
-          borderRadius: '20px',
+          width: '540px',
+          borderRadius: '24px',
           overflow: 'hidden',
-          /* CRITICAL: Solid background for PNG export — no transparency */
           backgroundColor: '#0B0620',
           backgroundImage: 'linear-gradient(145deg, #110B30, #050214)',
-          boxShadow: '0 0 40px rgba(139,92,246,0.15), 0 0 80px rgba(6,182,212,0.08), 0 20px 60px rgba(0,0,0,0.5)',
+          boxShadow: '0 0 40px rgba(139,92,246,0.15), 0 20px 60px rgba(0,0,0,0.5)',
           fontFamily: "'Exo 2', sans-serif",
           position: 'relative',
         } as React.CSSProperties}
       >
-        {/* Gradient border — rendered as 4 edge strips for canvas compatibility */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #8B5CF6, #06B6D4, #EC4899)', borderRadius: '20px 20px 0 0', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #EC4899, #06B6D4, #8B5CF6)', borderRadius: '0 0 20px 20px', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #8B5CF6, #EC4899)', borderRadius: '20px 0 0 20px', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #06B6D4, #8B5CF6)', borderRadius: '0 20px 20px 0', pointerEvents: 'none' }} />
+        {/* Border edges */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #8B5CF6, #06B6D4, #EC4899)', borderRadius: '24px 24px 0 0' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #EC4899, #06B6D4, #8B5CF6)', borderRadius: '0 0 24px 24px' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #8B5CF6, #EC4899)', borderRadius: '24px 0 0 24px' }} />
+        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #06B6D4, #8B5CF6)', borderRadius: '0 24px 24px 0' }} />
 
-        {/* Inner content */}
-        <div style={{ position: 'relative', zIndex: 5, padding: '16px 20px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'relative', zIndex: 5, padding: '24px 28px' }}>
 
           {/* HEADER */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <Shield size={13} style={{ color: '#8B5CF6' }} />
-                <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '10px', fontWeight: 800, letterSpacing: '2.5px', color: '#8B5CF6' }}>OFFICIAL ROAST LICENSE</span>
-              </div>
-              <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.25)', letterSpacing: '2px', marginTop: '2px', fontFamily: "'JetBrains Mono', monospace" }}>GOVERNMENT OF THE INTERNET • EST. 2026</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Shield size={16} style={{ color: '#8B5CF6' }} />
+              <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '13px', fontWeight: 800, letterSpacing: '3px', color: '#8B5CF6' }}>OFFICIAL ROAST LICENSE</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: statusColor }} />
-              <span style={{ fontSize: '7px', color: 'rgba(255,255,255,0.4)', fontFamily: "'JetBrains Mono', monospace" }}>ACTIVE</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: sc, boxShadow: `0 0 8px ${sc}` }} />
+              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontFamily: "'JetBrains Mono', monospace" }}>ACTIVE</span>
             </div>
           </div>
 
-          {/* MAIN ROW */}
-          <div style={{ display: 'flex', gap: '14px', marginBottom: '8px' }}>
-            {/* Photo */}
+          {/* PHOTO + NAME */}
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
-              <div style={{ width: '76px', height: '76px', borderRadius: '50%', padding: '3px', background: `conic-gradient(from 0deg, ${statusColor}, #8B5CF6, #06B6D4, ${statusColor})` }}>
-                <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#110B30', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {photo ? <img src={photo} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '30px' }}>👤</span>}
+              <div style={{ width: '90px', height: '90px', borderRadius: '50%', padding: '3px', background: `conic-gradient(from 0deg, ${sc}, #8B5CF6, #06B6D4, ${sc})` }}>
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {photo ? (
+                    <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: '36px', opacity: 0.6 }}>👤</span>
+                  )}
                 </div>
               </div>
               {isVerified && (
-                <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #FFD700, #FFA500)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #110B30' }}>
-                  <span style={{ fontSize: '12px' }}>🤡</span>
+                <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '26px', height: '26px', borderRadius: '50%', background: 'linear-gradient(135deg, #FFD700, #FFA500)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #110B30' }}>
+                  <span style={{ fontSize: '14px' }}>🤡</span>
                 </div>
               )}
             </div>
-
-            {/* Fields */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '3px' }}>
-              <div>
-                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.3)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace" }}>SUBJECT_ALIAS</div>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff', letterSpacing: '0.5px' }}>{name.toUpperCase()}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.3)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace" }}>MAIN_CHARACTER_ROLE</div>
-                <div style={{ fontSize: '10px', fontWeight: 600, color: statusColor }}>{status}</div>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '1px' }}>
-                <div>
-                  <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.25)', letterSpacing: '1.5px', fontFamily: "'JetBrains Mono', monospace" }}>ISSUE_ID</div>
-                  <div style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(255,255,255,0.6)', fontFamily: "'JetBrains Mono', monospace" }}>#{issueId}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.25)', letterSpacing: '1.5px', fontFamily: "'JetBrains Mono', monospace" }}>CLASS_TYPE</div>
-                  <div style={{ fontSize: '9px', fontWeight: 700, color: statusColor, fontFamily: "'JetBrains Mono', monospace" }}>CLASS {classType}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.25)', letterSpacing: '1.5px', fontFamily: "'JetBrains Mono', monospace" }}>SPAWN_DATE</div>
-                  <div style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(255,255,255,0.6)', fontFamily: "'JetBrains Mono', monospace" }}>{spawnDate}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ADDY + VIBE */}
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '6px' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.25)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace", marginBottom: '1px' }}>CURRENT_ADDY</div>
-              <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', fontFamily: "'JetBrains Mono', monospace" }}>{addy}</div>
-            </div>
-            <div style={{ flex: 1.5 }}>
-              <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.25)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace", marginBottom: '1px' }}>VIBE_CORDED</div>
-              <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic' }}>{vibeCord}</div>
+              <div style={LBL}>SUBJECT ALIAS</div>
+              <div style={{ fontSize: '22px', fontWeight: 800, color: '#fff', letterSpacing: '0.5px', marginBottom: '6px' }}>{name.toUpperCase()}</div>
+              <div style={LBL}>MAIN CHARACTER ROLE</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: sc }}>{status}</div>
             </div>
           </div>
+
+          {/* INFO GRID */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '4px' }}>
+            <div><div style={SLBL}>ISSUE ID</div><div style={SVAL}>#{issueId}</div></div>
+            <div><div style={SLBL}>CLASS</div><div style={{ ...SVAL, color: sc }}>CLASS {classType}</div></div>
+            <div><div style={SLBL}>SPAWN DATE</div><div style={SVAL}>{spawnDate}</div></div>
+          </div>
+
+          <div style={DIV} />
 
           {/* BRAIN ROT */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '7px', marginBottom: '6px' }}>
-            <BrainRotMeter level={roast.brainRotLevel} tier={roast.brainRotTier} />
-          </div>
+          <BrainRotBar level={roast.brainRotLevel} tier={roast.brainRotTier} />
+
+          <div style={DIV} />
 
           {/* ACHIEVEMENTS */}
-          <div style={{ marginBottom: '6px' }}>
-            <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.3)', letterSpacing: '2px', fontFamily: "'JetBrains Mono', monospace", marginBottom: '3px' }}>RECENT_ACHIEVEMENTS</div>
-            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {roast.aura.achievementCosts.map((a, i) => (
-                <span key={i} style={{ fontSize: '7px', padding: '2px 6px', borderRadius: '4px', backgroundColor: 'rgba(139, 92, 246, 0.12)', border: '1px solid rgba(139, 92, 246, 0.2)', color: 'rgba(255,255,255,0.55)', fontFamily: "'JetBrains Mono', monospace", display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  {a.name}
-                  <span style={{ color: '#EF4444', fontWeight: 700, fontSize: '7px' }}>({a.cost.toLocaleString()})</span>
+          <div>
+            <div style={{ ...LBL, marginBottom: '8px' }}>ACHIEVEMENTS</div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {achievements.map((a, i) => (
+                <span key={i} style={{ fontSize: '11px', padding: '4px 10px', borderRadius: '6px', backgroundColor: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', color: 'rgba(255,255,255,0.65)', fontFamily: "'JetBrains Mono', monospace" }}>
+                  {a}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* AURA TRACKER */}
-          <AuraTracker aura={roast.aura} />
+          <div style={DIV} />
+
+          {/* AURA — clean, just the total */}
+          <div style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${isNeg ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}`, borderRadius: '12px', padding: '16px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700 }}>✨ TOTAL AURA</span>
+            <span style={{ fontSize: '28px', fontWeight: 900, fontFamily: "'Orbitron', sans-serif", color: isNeg ? '#EF4444' : '#10B981' }}>{auraStr}</span>
+          </div>
+
+          <div style={DIV} />
 
           {/* OFFICER'S VERDICT */}
-          <div style={{ marginTop: '6px', padding: '8px 10px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.06)', border: '1px solid rgba(239, 68, 68, 0.15)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%) rotate(-12deg)', fontSize: '32px', fontFamily: "'Caveat', cursive", fontWeight: 700, color: 'rgba(239, 68, 68, 0.07)', letterSpacing: '3px', textTransform: 'uppercase', pointerEvents: 'none', whiteSpace: 'nowrap', lineHeight: 1 }}>COOKED</div>
-            <div style={{ position: 'absolute', top: '3px', right: '6px', width: '42px', height: '42px', borderRadius: '50%', border: '2px solid rgba(239, 68, 68, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'rotate(-18deg)' }}>
-              <span style={{ fontSize: '6px', fontFamily: "'Orbitron', sans-serif", fontWeight: 800, color: 'rgba(239, 68, 68, 0.5)', letterSpacing: '1px', textAlign: 'center', lineHeight: 1.2 }}>ROAST<br />DEPT.</span>
+          <div style={{ padding: '14px 16px', borderRadius: '12px', backgroundColor: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.12)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: '50%', right: '14px', transform: 'translateY(-50%) rotate(-12deg)', fontSize: '40px', fontFamily: "'Caveat', cursive", fontWeight: 700, color: 'rgba(239,68,68,0.06)', letterSpacing: '3px', pointerEvents: 'none', whiteSpace: 'nowrap' }}>COOKED</div>
+            <div style={{ position: 'absolute', top: '6px', right: '10px', width: '48px', height: '48px', borderRadius: '50%', border: '2px solid rgba(239,68,68,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'rotate(-18deg)' }}>
+              <span style={{ fontSize: '8px', fontFamily: "'Orbitron', sans-serif", fontWeight: 800, color: 'rgba(239,68,68,0.45)', letterSpacing: '1px', textAlign: 'center', lineHeight: 1.2 }}>ROAST<br />DEPT.</span>
             </div>
-            <div style={{ fontSize: '6px', color: 'rgba(239, 68, 68, 0.55)', letterSpacing: '2.5px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase' }}>🚨 OFFICER'S VERDICT</div>
-            <div style={{ fontSize: '10px', lineHeight: 1.45, color: 'rgba(255, 200, 200, 0.85)', fontFamily: "'Caveat', cursive", fontWeight: 700, fontStyle: 'italic', paddingRight: '48px', letterSpacing: '0.3px' }}>"{roast.verdict}"</div>
+            <div style={{ fontSize: '10px', color: 'rgba(239,68,68,0.5)', letterSpacing: '3px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700, marginBottom: '8px' }}>🚨 OFFICER'S VERDICT</div>
+            <div
+              style={{
+                fontSize: '15px',
+                lineHeight: 1.5,
+                color: 'rgba(255,200,200,0.95)',
+                fontFamily: "'Exo 2', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                fontWeight: 700,
+                fontStyle: 'normal',
+                paddingRight: '56px',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+              }}
+            >
+              "{roast.verdict}"
+            </div>
           </div>
+
+          <div style={DIV} />
 
           {/* FOOTER */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ display: 'flex', gap: '14px' }}>
-              <div>
-                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.2)', letterSpacing: '1px', fontFamily: "'JetBrains Mono', monospace" }}>ISSUE_DATE</div>
-                <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)', fontFamily: "'JetBrains Mono', monospace" }}>{issueDate}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.2)', letterSpacing: '1px', fontFamily: "'JetBrains Mono', monospace" }}>LUCK_LVL</div>
-                <div style={{ fontSize: '8px', color: '#06B6D4', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{luckLevel}%</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.2)', letterSpacing: '1px', fontFamily: "'JetBrains Mono', monospace" }}>EXPIRY_DATE</div>
-                <div style={{ fontSize: '7px', color: '#EF4444', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>NEVER (STAY COOKED)</div>
-              </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <div><div style={SLBL}>ISSUED</div><div style={SVAL}>{issueDate}</div></div>
+              <div><div style={SLBL}>LUCK</div><div style={{ ...SVAL, color: '#06B6D4' }}>{luckLevel}%</div></div>
+              <div><div style={SLBL}>EXPIRES</div><div style={{ fontSize: '11px', color: '#EF4444', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>NEVER</div></div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {isVerified && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', backgroundColor: 'rgba(255,215,0,0.12)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(255,215,0,0.3)' }}>
-                  <Star size={8} style={{ color: '#FFD700' }} />
-                  <span style={{ fontSize: '6px', color: '#FFD700', fontWeight: 700, fontFamily: "'Orbitron', sans-serif", letterSpacing: '1px' }}>VERIFIED</span>
-                </div>
-              )}
-              <Award size={11} style={{ color: 'rgba(255,255,255,0.12)' }} />
-            </div>
+            {isVerified && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(255,215,0,0.1)', padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(255,215,0,0.25)' }}>
+                <Star size={10} style={{ color: '#FFD700' }} />
+                <span style={{ fontSize: '9px', color: '#FFD700', fontWeight: 700, fontFamily: "'Orbitron', sans-serif", letterSpacing: '1px' }}>VERIFIED</span>
+              </div>
+            )}
           </div>
 
-          {/* VIRAL BRANDING WATERMARK */}
-          <div style={{ textAlign: 'center', marginTop: '8px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
-            <span style={{ fontSize: '8px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(255,255,255,0.2)', letterSpacing: '3px' }}>GET YOURS AT: ROAST-LICENSE.COM</span>
+          {/* BRANDING */}
+          <div style={{ textAlign: 'center', marginTop: '14px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(255,255,255,0.2)', letterSpacing: '4px' }}>GET YOURS AT: ROAST-LICENSE.COM</span>
           </div>
         </div>
 
-        {/* Pattern overlay */}
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.02, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)', pointerEvents: 'none', zIndex: 1 }} />
+        {/* Pattern */}
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.015, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.5) 3px, rgba(255,255,255,0.5) 4px)', pointerEvents: 'none', zIndex: 1 }} />
       </div>
     );
   }
