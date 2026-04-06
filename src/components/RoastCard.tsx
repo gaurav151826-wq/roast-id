@@ -82,10 +82,10 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
         id="roast-card"
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setShimmerPos({ x: -100, y: 0 })}
-        className="holo-shimmer relative"
+        className="holo-shimmer roast-card relative"
         style={{
           '--shimmer-x': `${shimmerPos.x}%`,
-          width: '540px',
+          width: 'min(540px, 100%)',
           borderRadius: '24px',
           overflow: 'hidden',
           backgroundColor: '#0B0620',
@@ -101,23 +101,23 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
         <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #8B5CF6, #EC4899)', borderRadius: '24px 0 0 24px' }} />
         <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '2px', background: 'linear-gradient(180deg, #06B6D4, #8B5CF6)', borderRadius: '0 24px 24px 0' }} />
 
-        <div style={{ position: 'relative', zIndex: 5, padding: '24px 28px' }}>
+        <div className="roast-card-inner" style={{ position: 'relative', zIndex: 5, padding: '24px 28px' }}>
 
           {/* HEADER */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="roast-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div className="roast-card-title-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Shield size={16} style={{ color: '#8B5CF6' }} />
-              <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '13px', fontWeight: 800, letterSpacing: '3px', color: '#8B5CF6' }}>OFFICIAL ROAST LICENSE</span>
+              <span className="roast-card-title" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '13px', fontWeight: 800, letterSpacing: '3px', color: '#8B5CF6' }}>OFFICIAL ROAST LICENSE</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div className="roast-card-active" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: sc, boxShadow: `0 0 8px ${sc}` }} />
               <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontFamily: "'JetBrains Mono', monospace" }}>ACTIVE</span>
             </div>
           </div>
 
           {/* PHOTO + NAME */}
-          <div style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
-            <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div className="roast-card-identity" style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
+            <div className="roast-card-avatar-wrap" style={{ position: 'relative', flexShrink: 0 }}>
               <div style={{ width: '90px', height: '90px', borderRadius: '50%', padding: '3px', background: `conic-gradient(from 0deg, ${sc}, #8B5CF6, #06B6D4, ${sc})` }}>
                 <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', backgroundColor: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {photo ? (
@@ -133,16 +133,16 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
                 </div>
               )}
             </div>
-            <div style={{ flex: 1 }}>
+            <div className="roast-card-identity-text" style={{ flex: 1 }}>
               <div style={LBL}>SUBJECT ALIAS</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: '#fff', letterSpacing: '0.5px', marginBottom: '6px' }}>{name.toUpperCase()}</div>
+              <div className="roast-card-name" style={{ fontSize: '22px', fontWeight: 800, color: '#fff', letterSpacing: '0.5px', marginBottom: '6px', overflowWrap: 'anywhere' }}>{name.toUpperCase()}</div>
               <div style={LBL}>MAIN CHARACTER ROLE</div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: sc }}>{status}</div>
+              <div className="roast-card-status" style={{ fontSize: '14px', fontWeight: 700, color: sc }}>{status}</div>
             </div>
           </div>
 
           {/* INFO GRID */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '4px' }}>
+          <div className="roast-card-info-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '4px' }}>
             <div><div style={SLBL}>ISSUE ID</div><div style={SVAL}>#{issueId}</div></div>
             <div><div style={SLBL}>CLASS</div><div style={{ ...SVAL, color: sc }}>CLASS {classType}</div></div>
             <div><div style={SLBL}>SPAWN DATE</div><div style={SVAL}>{spawnDate}</div></div>
@@ -170,9 +170,9 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
           <div style={DIV} />
 
           {/* AURA — clean, just the total */}
-          <div style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${isNeg ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}`, borderRadius: '12px', padding: '16px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700 }}>✨ TOTAL AURA</span>
-            <span style={{ fontSize: '28px', fontWeight: 900, fontFamily: "'Orbitron', sans-serif", color: isNeg ? '#EF4444' : '#10B981' }}>{auraStr}</span>
+          <div className="roast-card-aura" style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: `1px solid ${isNeg ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}`, borderRadius: '12px', padding: '16px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="roast-card-aura-label" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', letterSpacing: '3px', fontFamily: "'Orbitron', sans-serif", fontWeight: 700 }}>✨ TOTAL AURA</span>
+            <span className="roast-card-aura-value" style={{ fontSize: '28px', fontWeight: 900, fontFamily: "'Orbitron', sans-serif", color: isNeg ? '#EF4444' : '#10B981' }}>{auraStr}</span>
           </div>
 
           <div style={DIV} />
@@ -205,8 +205,8 @@ const RoastCard = forwardRef<HTMLDivElement, RoastCardProps>(
           <div style={DIV} />
 
           {/* FOOTER */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '20px' }}>
+          <div className="roast-card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="roast-card-footer-meta" style={{ display: 'flex', gap: '20px' }}>
               <div><div style={SLBL}>ISSUED</div><div style={SVAL}>{issueDate}</div></div>
               <div><div style={SLBL}>LUCK</div><div style={{ ...SVAL, color: '#06B6D4' }}>{luckLevel}%</div></div>
               <div><div style={SLBL}>EXPIRES</div><div style={{ fontSize: '11px', color: '#EF4444', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>NEVER</div></div>

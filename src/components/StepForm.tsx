@@ -18,7 +18,7 @@ const ACHIEVEMENTS = [
   { value: 'Typed a whole paragraph then deleted it all', emoji: '🤐' },
   { value: 'Put phone on DND and forgot about it for a week', emoji: '🔕' },
   { value: 'Rewatched your own story 10+ times', emoji: '🔁' },
-  { value: "Ignored a call and texted 'what\'s up' instead", emoji: '📵' },
+  { value: "Ignored a call and texted 'what's up' instead", emoji: '📵' },
   { value: 'Let your phone die during an important convo', emoji: '💀' },
   { value: "Watched someone's story and said absolutely nothing", emoji: '😶' },
   { value: 'Took 30+ selfies just to post one', emoji: '🤳' },
@@ -132,12 +132,12 @@ export default function StepForm({ onGenerate, isGenerating }: StepFormProps) {
 
           {step === 3 && (
             <motion.div key="s3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-cyan to-cyber-green flex items-center justify-center"><Sparkles size={20} className="text-white" /></div>
                   <div><h2 className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>YOUR CRIMES</h2><p className="text-xs text-white/40">Pick all that apply (each costs aura)</p></div>
                 </div>
-                {achievements.length > 0 && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-right"><div className="text-[9px] text-white/30 tracking-wider" style={{ fontFamily: 'var(--font-mono)' }}>AURA HIT</div><div className="text-lg font-black text-red-400" style={{ fontFamily: 'var(--font-display)' }}>{runningAuraLoss.toLocaleString()}</div></motion.div>}
+                {achievements.length > 0 && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-right ml-auto"><div className="text-[9px] text-white/30 tracking-wider" style={{ fontFamily: 'var(--font-mono)' }}>AURA HIT</div><div className="text-lg font-black text-red-400" style={{ fontFamily: 'var(--font-display)' }}>{runningAuraLoss.toLocaleString()}</div></motion.div>}
               </div>
               <div className="space-y-1.5 max-h-[280px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(139,92,246,0.3) transparent' }}>
                 {ACHIEVEMENTS.map(a => {
@@ -221,8 +221,8 @@ export default function StepForm({ onGenerate, isGenerating }: StepFormProps) {
       </div>
 
       <div className="flex items-center gap-3 mt-8">
-        {step > 1 && <motion.button initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} type="button" onClick={goPrev} className="cyber-btn px-5 py-3.5 rounded-xl glass text-sm flex items-center gap-2 text-white/70 hover:text-white"><ChevronLeft size={16} /> BACK</motion.button>}
-        <motion.button type="button" onClick={goNext} disabled={!canProceed() || isGenerating} className={`cyber-btn flex-1 py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 text-white disabled:opacity-30 disabled:cursor-not-allowed ${step === TOTAL_STEPS ? 'bg-gradient-to-r from-cyber-purple to-cyber-cyan' : 'bg-gradient-to-r from-cyber-purple/80 to-cyber-cyan/80'}`} whileHover={canProceed() ? { scale: 1.02 } : {}} whileTap={canProceed() ? { scale: 0.98 } : {}}>
+        {step > 1 && <motion.button initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} type="button" onClick={goPrev} className="cyber-btn px-4 sm:px-5 py-3.5 rounded-xl glass text-xs sm:text-sm flex items-center gap-2 text-white/70 hover:text-white"><ChevronLeft size={16} /> BACK</motion.button>}
+        <motion.button type="button" onClick={goNext} disabled={!canProceed() || isGenerating} className={`cyber-btn flex-1 py-3.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-white disabled:opacity-30 disabled:cursor-not-allowed ${step === TOTAL_STEPS ? 'bg-gradient-to-r from-cyber-purple to-cyber-cyan' : 'bg-gradient-to-r from-cyber-purple/80 to-cyber-cyan/80'}`} whileHover={canProceed() ? { scale: 1.02 } : {}} whileTap={canProceed() ? { scale: 0.98 } : {}}>
           {isGenerating ? (<><motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}><Sparkles size={16} /></motion.div> GENERATING...</>) : step === TOTAL_STEPS ? (<><Sparkles size={16} /> GENERATE LICENSE</>) : (<>NEXT <ChevronRight size={16} /></>)}
         </motion.button>
       </div>
